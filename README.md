@@ -13,7 +13,7 @@ You can run the agent in two different modes:
 ### 1. **GPU-Accelerated Mode** (NVIDIA cuML + cuDF)
 Leverages NVIDIA's RAPIDS libraries for faster data processing and model training.
 
-python -m cudf.pandas --cuml.accel run.py
+python -m cuml.accel --cudf-pandas run.py
 
 
 ---
