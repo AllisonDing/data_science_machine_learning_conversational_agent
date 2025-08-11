@@ -1,0 +1,64 @@
+load_data:
+  description: |
+    Load the dataset from a configured path. Validate numeric/categorical columns, identify target, and output a dataframe bundle.
+  expected_output: |
+    {
+      "df_head": "string",
+      "n_rows": "int",
+      "n_cols": "int",
+      "target": "string",
+      "schema": {"col": "dtype"},
+      "data_path": "string"
+    }
+  agent: data_import 
+
+run_eda:
+  description: |
+    Run basic EDA (null counts, basic stats, class balance, few plots if requested) and produce a summary to guide features.
+  expected_output: |
+    {
+      "null_report": {"col": "null_count"},
+      "class_balance": {"label": "count"},
+      "notes": "string"
+    }
+  agent: eda 
+
+build_features:
+  description: |
+    Clean data, impute, encode categorical, scale numeric, split train/test.
+  expected_output: |
+    {
+      "X_train_shape": [int, int],
+      "X_test_shape": [int, int],
+      "y_train_dist": {"label": "count"},
+      "transformers": "artifact_path"
+    }
+  agent: features
+
+train_models:
+  description: |
+    Train multiple models with GPU acceleration when available (cuML LR, RF, SVC), optionally tune simple hyperparameters. Return metrics and model artifacts. 
+  expected_output: |
+    {
+      "candidates": [
+        {"name": "string", "metrics": {"accuracy": float, "f1": float}, "artifact": "path"}
+      ]
+    }
+  agent: modeling
+
+select_and_report:
+  description: |
+    Compare candidates, pick a champion, explain trade-offs, and produce a short report (markdown) with next steps.
+  expected_output: |
+    {
+      "champion": {"name": "string", "metrics": {"accuracy": float, "f1": float}},
+      "report_md": "string"
+    }
+  agent: evaluation 
+
+final_report:
+  description: |
+    Compile the entire run (EDA + Features + Modeling + Selection) into one stakeholder-ready markdown report. 
+  expected_output: |
+    {"report_md": "string"}
+  agent: reporter  
