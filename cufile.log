@@ -1,0 +1,33 @@
+ 14-08-2025 22:35:26:67 [pid=2993405 tid=2993405] NOTICE  cufio-drv:855 running in compatible mode
+ 14-08-2025 22:35:26:357 [pid=2993405 tid=2993405] ERROR  cufio-fs:284 block device dm-1 with drive integrity check capalibility not supported!!
+ 14-08-2025 22:35:26:357 [pid=2993405 tid=2993405] ERROR  cufio-fs:68 mount options not specified for device in mount table 
+ 16-08-2025 09:58:28:614 [pid=3370881 tid=3370881] NOTICE  cufio-drv:855 running in compatible mode
+ 16-08-2025 09:58:28:890 [pid=3370881 tid=3370881] ERROR  cufio-fs:284 block device dm-1 with drive integrity check capalibility not supported!!
+ 16-08-2025 09:58:28:890 [pid=3370881 tid=3370881] ERROR  cufio-fs:68 mount options not specified for device in mount table 
+ 16-08-2025 10:21:21:637 [pid=3376757 tid=3376757] NOTICE  cufio-drv:855 running in compatible mode
+ 16-08-2025 10:21:21:917 [pid=3376757 tid=3376757] ERROR  cufio-fs:284 block device dm-1 with drive integrity check capalibility not supported!!
+ 16-08-2025 10:21:21:917 [pid=3376757 tid=3376757] ERROR  cufio-fs:68 mount options not specified for device in mount table 
+ 16-08-2025 10:41:15:678 [pid=3381474 tid=3381474] NOTICE  cufio-drv:855 running in compatible mode
+ 16-08-2025 10:41:15:957 [pid=3381474 tid=3381474] ERROR  cufio-fs:284 block device dm-1 with drive integrity check capalibility not supported!!
+ 16-08-2025 10:41:15:957 [pid=3381474 tid=3381474] ERROR  cufio-fs:68 mount options not specified for device in mount table 
+ 16-08-2025 10:54:34:512 [pid=3384412 tid=3384412] NOTICE  cufio-drv:855 running in compatible mode
+ 16-08-2025 10:54:34:791 [pid=3384412 tid=3384412] ERROR  cufio-fs:284 block device dm-1 with drive integrity check capalibility not supported!!
+ 16-08-2025 10:54:34:791 [pid=3384412 tid=3384412] ERROR  cufio-fs:68 mount options not specified for device in mount table 
+ 16-08-2025 11:00:53:753 [pid=3386070 tid=3386070] NOTICE  cufio-drv:855 running in compatible mode
+ 16-08-2025 11:00:54:31 [pid=3386070 tid=3386070] ERROR  cufio-fs:284 block device dm-1 with drive integrity check capalibility not supported!!
+ 16-08-2025 11:00:54:31 [pid=3386070 tid=3386070] ERROR  cufio-fs:68 mount options not specified for device in mount table 
+ 16-08-2025 11:04:15:596 [pid=3386880 tid=3386880] NOTICE  cufio-drv:855 running in compatible mode
+ 16-08-2025 11:04:15:880 [pid=3386880 tid=3386880] ERROR  cufio-fs:284 block device dm-1 with drive integrity check capalibility not supported!!
+ 16-08-2025 11:04:15:880 [pid=3386880 tid=3386880] ERROR  cufio-fs:68 mount options not specified for device in mount table 
+ 16-08-2025 11:11:29:96 [pid=3388307 tid=3388307] NOTICE  cufio-drv:855 running in compatible mode
+ 16-08-2025 11:11:29:374 [pid=3388307 tid=3388307] ERROR  cufio-fs:284 block device dm-1 with drive integrity check capalibility not supported!!
+ 16-08-2025 11:11:29:374 [pid=3388307 tid=3388307] ERROR  cufio-fs:68 mount options not specified for device in mount table 
+ 16-08-2025 11:18:03:506 [pid=3389756 tid=3389756] NOTICE  cufio-drv:855 running in compatible mode
+ 16-08-2025 11:18:03:791 [pid=3389756 tid=3389756] ERROR  cufio-fs:284 block device dm-1 with drive integrity check capalibility not supported!!
+ 16-08-2025 11:18:03:792 [pid=3389756 tid=3389756] ERROR  cufio-fs:68 mount options not specified for device in mount table 
+ 16-08-2025 11:20:35:630 [pid=3390592 tid=3390592] NOTICE  cufio-drv:855 running in compatible mode
+ 16-08-2025 11:20:35:908 [pid=3390592 tid=3390592] ERROR  cufio-fs:284 block device dm-1 with drive integrity check capalibility not supported!!
+ 16-08-2025 11:20:35:908 [pid=3390592 tid=3390592] ERROR  cufio-fs:68 mount options not specified for device in mount table 
+ 16-08-2025 11:29:41:684 [pid=3392235 tid=3392235] NOTICE  cufio-drv:855 running in compatible mode
+ 16-08-2025 11:29:41:963 [pid=3392235 tid=3392235] ERROR  cufio-fs:284 block device dm-1 with drive integrity check capalibility not supported!!
+ 16-08-2025 11:29:41:963 [pid=3392235 tid=3392235] ERROR  cufio-fs:68 mount options not specified for device in mount table 

@@ -3,7 +3,7 @@ from src.crew import build_crew, run_pipeline
 
 if __name__ == "__main__":
 
-    DATA_PATH = "data/Titanic-Dataset.csv"
+    DATA_PATH = "data/Titanic-Dataset-1.csv"
     TARGET = "Survived"
 
     agents_yaml = Path("config/agents.yaml").resolve()
