@@ -31,3 +31,6 @@
  16-08-2025 11:29:41:684 [pid=3392235 tid=3392235] NOTICE  cufio-drv:855 running in compatible mode
  16-08-2025 11:29:41:963 [pid=3392235 tid=3392235] ERROR  cufio-fs:284 block device dm-1 with drive integrity check capalibility not supported!!
  16-08-2025 11:29:41:963 [pid=3392235 tid=3392235] ERROR  cufio-fs:68 mount options not specified for device in mount table 
+ 01-09-2025 18:17:16:570 [pid=3120243 tid=3120243] NOTICE  cufio-drv:855 running in compatible mode
+ 01-09-2025 18:17:16:854 [pid=3120243 tid=3120243] ERROR  cufio-fs:284 block device dm-1 with drive integrity check capalibility not supported!!
+ 01-09-2025 18:17:16:855 [pid=3120243 tid=3120243] ERROR  cufio-fs:68 mount options not specified for device in mount table 
