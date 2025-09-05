@@ -215,7 +215,6 @@ class ChatAgent:
                     },
                 },
             },
-            # append these dicts to the returned list
             {
                 "type": "function",
                 "function": {

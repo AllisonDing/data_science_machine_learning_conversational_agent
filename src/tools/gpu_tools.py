@@ -160,8 +160,8 @@ def hpo_logistic(
         "name": "Logistic Regression HPO",
         "metrics": {
             "train_accuracy": float(best_pipe.score(X_train, y_train)),
-            "test_accuracy": None,                 # fill after you eval on X_test
-            "f1_weighted": float(study.best_value),    # using CV score to match your shape
+            "test_accuracy": None,                 
+            "f1_weighted": float(study.best_value),    
         },
         "artifact": best_pipe,
         "best_params": best,
@@ -212,8 +212,8 @@ def hpo_svc(
         "name": "(HPO) SVC (simple)",
         "metrics": {
             "train_accuracy": float(best_pipe.score(X_train, y_train)),
-            "test_accuracy": None,                 # fill after you eval on X_test
-            "f1_weighted": float(study.best_value),    # CV score to match your struct
+            "test_accuracy": None,                 
+            "f1_weighted": float(study.best_value),   
         },
         "artifact": best_pipe,
         "best_params": best,
@@ -268,8 +268,8 @@ def hpo_random_forest(
         "name": "(HPO) Random Forest (simple)",
         "metrics": {
             "train_accuracy": float(best_pipe.score(X_train, y_train)),
-            "test_accuracy": None,                 # fill after you eval on X_test
-            "f1_weighted": float(study.best_value),    # CV score to match your structure
+            "test_accuracy": None,                 
+            "f1_weighted": float(study.best_value), 
         },
         "artifact": best_pipe,
         "best_params": best,
