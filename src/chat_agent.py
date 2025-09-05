@@ -38,7 +38,8 @@ def _intent_router(user_message: str):
 
     if "set" in m and "dataset" in m:
         tgt = re.search(r"target\s*=?\s*([A-Za-z0-9_]+)", user_message)
-        path = re.search(r"(?:to|=)\s*[`'\"]?([^`'\"\n]+)", user_message)
+        path = re.search(r"(?:to|=)\s*[`'\"]?([^\s`'\"\n]+)", user_message)
+
         if path:
             args = {"path": path.group(1).strip()}
             if tgt:
@@ -66,6 +67,29 @@ def _intent_router(user_message: str):
         if tgt:
             args["target"] = tgt.group(1)
         return "train_classification", args
+    
+    # --- HPO routing ---
+    if "hpo" in m or "tune" in m or "optuna" in m:
+        # defaults
+        args = {"n_trials": 30, "scoring": "f1_weighted"}
+        # n_trials parser (e.g., "hpo logistic 50" or "n_trials=40")
+        m_trials = re.search(r"(?:n[_\- ]?trials\s*=?\s*|hpo\s+\w+\s+)(\d+)", user_message, re.I)
+        if m_trials:
+            try:
+                args["n_trials"] = max(1, min(200, int(m_trials.group(1))))
+            except Exception:
+                pass
+        # scoring parser (e.g., "scoring=accuracy")
+        m_scoring = re.search(r"scoring\s*=\s*([A-Za-z0-9_]+)", user_message)
+        if m_scoring:
+            args["scoring"] = m_scoring.group(1)
+
+        if "logistic" in m or "logreg" in m or "lr" in m:
+            return "hpo_logistic", args
+        if "svc" in m or "svm" in m:
+            return "hpo_svc", args
+        if "rf" in m or "random forest" in m:
+            return "hpo_random_forest", args
 
     return None, None
 
@@ -84,6 +108,18 @@ def _ensure_cupy_stub():
 def _get_llm_client():
     # must return an object exposing .chat(messages=..., tools=...)
     return llm_module.create_client()
+
+def _clean_response(raw_output: str) -> str:
+    """Strip leaked <think>...</think> and ensure valid JSON parsing when possible."""
+    # Remove leaked reasoning blocks
+    cleaned = re.sub(r"<think>.*?</think>", "", raw_output, flags=re.DOTALL).strip()
+    try:
+        parsed = json.loads(cleaned)
+        if isinstance(parsed, dict) and "answer" in parsed:
+            return parsed["answer"]
+    except Exception:
+        pass
+    return cleaned
 
 # -----------------------
 # Agent
@@ -110,6 +146,9 @@ class ChatAgent:
             "describe": self._tool_describe,
             "preview": self._tool_preview,
             "train_classification": self._tool_train_classification,
+            "hpo_logistic": self._tool_hpo_logistic,
+            "hpo_svc": self._tool_hpo_svc,
+            "hpo_random_forest": self._tool_hpo_random_forest,
         }
 
         # Keep the prompt simple and tool-first; no chain-of-thought
@@ -122,6 +161,9 @@ class ChatAgent:
             "- describe()\n"
             "- preview(n)\n"
             "- train_classification(target?)\n"
+            "- hpo_logistic(n_trials?, scoring?)\n"
+            "- hpo_svc(n_trials?, scoring?)\n"
+            "- hpo_random_forest(n_trials?, scoring?)\n"
             "Ask a short follow-up only if a required argument is missing."
         )
 
@@ -170,6 +212,49 @@ class ChatAgent:
                     "parameters": {
                         "type": "object",
                         "properties": {"target": {"type": "string"}},
+                    },
+                },
+            },
+            # append these dicts to the returned list
+            {
+                "type": "function",
+                "function": {
+                    "name": "hpo_logistic",
+                    "description": "Hyperparameter optimization for Logistic Regression via Optuna.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "n_trials": {"type": "integer", "default": 30, "minimum": 1, "maximum": 200},
+                            "scoring":  {"type": "string",  "default": "f1_weighted"}
+                        }
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "hpo_svc",
+                    "description": "Hyperparameter optimization for SVC via Optuna.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "n_trials": {"type": "integer", "default": 30, "minimum": 1, "maximum": 200},
+                            "scoring":  {"type": "string",  "default": "f1_weighted"}
+                        }
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "hpo_random_forest",
+                    "description": "Hyperparameter optimization for RandomForest via Optuna.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "n_trials": {"type": "integer", "default": 30, "minimum": 1, "maximum": 200},
+                            "scoring":  {"type": "string",  "default": "f1_weighted"}
+                        }
                     },
                 },
             },
@@ -249,12 +334,59 @@ class ChatAgent:
         payload = {
             "target": self.target,
             "results": [
-                {"model": r["name"], "accuracy": r["metrics"]["accuracy"], "f1_weighted": r["metrics"]["f1"]}
+                {"model": r["name"], "train_accuracy": r["metrics"]["train_accuracy"], "test_accuracy": r["metrics"]["test_accuracy"], "f1_weighted": r["metrics"]["f1_weighted"]}
                 for r in results
             ],
             "saved_champion_to": best_path,
         }
         return json.dumps(payload, indent=2)
+    
+    def _eval_on_test(self, pipe, X_te, y_te):
+        from sklearn.metrics import accuracy_score, f1_score
+        preds = pipe.predict(X_te)
+        return float(accuracy_score(y_te, preds)), float(f1_score(y_te, preds, average="weighted"))
+
+    def _run_hpo_and_summarize(self, hpo_fn, n_trials: int, scoring: str) -> str:
+        if self.df is None:
+            return "No dataset loaded. Use set_dataset(path, target?) first."
+        pre, X_pd, y_np, *_ = gpu_tools.build_feature_pipeline(self.df, self.target)
+        X_tr, X_te, y_tr, y_te = gpu_tools.split_data(X_pd, y_np)
+
+        res = hpo_fn(X_tr, y_tr, preprocessor=pre, n_trials=n_trials, scoring=scoring, random_state=42)
+        test_acc, test_f1 = self._eval_on_test(res["artifact"], X_te, y_te)
+        res["metrics"]["test_accuracy"] = test_acc
+        res["metrics"]["f1_weighted"] = test_f1
+
+        # Optionally save the champion
+        best_path = "(no artifact)"
+        try:
+            dump(res["artifact"], self.champion_path)
+            best_path = str(self.champion_path)
+        except Exception as e:
+            best_path = f"(save failed: {e})"
+
+        payload = {
+            "target": self.target,
+            "results": [{
+                "model": res["name"],
+                "train_accuracy": res["metrics"]["train_accuracy"],
+                "test_accuracy": res["metrics"]["test_accuracy"],
+                "f1_weighted": res["metrics"]["f1_weighted"],
+                "best_params": res.get("best_params", {})
+            }],
+            "saved_champion_to": best_path,
+        }
+        return json.dumps(payload, indent=2)
+
+    def _tool_hpo_logistic(self, n_trials: int = 30, scoring: str = "f1_weighted") -> str:
+        return self._run_hpo_and_summarize(gpu_tools.hpo_logistic, n_trials, scoring)
+
+    def _tool_hpo_svc(self, n_trials: int = 30, scoring: str = "f1_weighted") -> str:
+        return self._run_hpo_and_summarize(gpu_tools.hpo_svc, n_trials, scoring)
+
+    def _tool_hpo_random_forest(self, n_trials: int = 30, scoring: str = "f1_weighted") -> str:
+        return self._run_hpo_and_summarize(gpu_tools.hpo_random_forest, n_trials, scoring)
+
 
     # ---- Plumbing ----
     def _client_chat(self, messages, tools=None):
@@ -295,7 +427,7 @@ class ChatAgent:
             second = self._client_chat(self.memory, tools=tool_specs)
             # NL summary from the model:
             final_msg = second["choices"][0]["message"]["content"] if isinstance(second, dict) else second.choices[0].message.content
-            return final_msg or tool_result
+            return _clean_response(final_msg or tool_result)
 
         # Fallback: route ourselves
         fn_name, args = _intent_router(user_message)

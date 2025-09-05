@@ -3,8 +3,8 @@ import os, requests
 from typing import List, Optional
 
 _BASE_URL = "https://integrate.api.nvidia.com/v1"
-_MODEL = "nvidia/llama-3.3-nemotron-super-49b-v1.5"
-
+# _MODEL = "nvidia/llama-3.3-nemotron-super-49b-v1.5"
+_MODEL = "nvidia/nvidia-nemotron-nano-9b-v2"
 class Client:
     """Minimal client that matches OpenAI's /chat/completions shape."""
     def __init__(self,
