@@ -13,7 +13,6 @@ Download the dataset and place it in the `data/` directory before running the ag
 
 For performance testing, you can also use **Titanic-Dataset-1.csv**, an extrapolated version scaled to 1M rows. This larger dataset is useful for demonstrating GPU acceleration.
 
-
 ---
 
 ## Running the Agent
@@ -23,16 +22,24 @@ You can run the agent in two different modes:
 ### 1. **GPU-Accelerated Mode** (NVIDIA cuML + cuDF)
 Leverages NVIDIA's RAPIDS libraries for faster data processing and model training.
 
-python -m cuml.accel --cudf-pandas run.py
-
-
----
+```bash 
+python -m cudf.padnas -m cuml.accel run_chat.py
+```
 
 ### 2. **CPU Mode** (scikit-learn + pandas)
 Uses standard pandas and scikit-learn for data processing and modeling.
 
-python run.py
+```bash
+python run_chat.py
+```
 
+### The agent supports queries such as:<br>
+   describe the data<br>
+   preview the head<br>
+   train the classification model<br>
+   hyperparameter optimization (HPO)<br>
+   best practice to perform machine learning<br>
+   ...
 
 ---
 
