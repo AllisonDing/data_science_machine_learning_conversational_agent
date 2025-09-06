@@ -1,8 +1,18 @@
-## Titanic Dataset
+# Conversational ML Agent
 
-This project uses the [Titanic dataset from Kaggle](https://www.kaggle.com/datasets/yasserh/titanic-dataset?select=Titanic-Dataset.csv).
+A conversational data science and machine learning agent powered by NVIDIA GPUs.  
+You can interact with it using natural language to run data exploration and machine learning tasks with minimal setup.
+
+---
+
+## 📊 Dataset
+
+This project uses the Kaggle [Titanic-Dataset.csv](https://www.kaggle.com/datasets/yasserh/titanic-dataset?select=Titanic-Dataset.csv).
 
 Download the dataset and place it in the `data/` directory before running the agent.
+
+For performance testing, you can also use **Titanic-Dataset-1.csv**, an extrapolated version scaled to 1M rows. This larger dataset is useful for demonstrating GPU acceleration.
+
 
 ---
 
